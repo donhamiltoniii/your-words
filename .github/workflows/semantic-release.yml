@@ -1,0 +1,54 @@
+name: Semantic Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # manual trigger
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      packages: write   # only needed if you publish to npm
+    steps:
+      # ------------------------------------------------------------
+      # 1️⃣ Checkout with full history (required for tag analysis)
+      # ------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ------------------------------------------------------------
+      # 2️⃣ Set up Node (match your local version)
+      # ------------------------------------------------------------
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'   # adjust if you use a different version
+          cache: 'npm'
+
+      # ------------------------------------------------------------
+      # 3️⃣ Install dependencies (including devDeps)
+      # ------------------------------------------------------------
+      - name: Install dependencies
+        run: npm ci
+
+      # ------------------------------------------------------------
+      # 4️⃣ OPTIONAL: Run a pure type‑check (tsc --noEmit)
+      # ------------------------------------------------------------
+      - name: Type‑check (no emit)
+        run: npm run type-check
+
+      # ------------------------------------------------------------
+      # 5️⃣ Run Semantic Release (includes the exec build step)
+      # ------------------------------------------------------------
+      - name: Run Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # If you added npm publishing:
+          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
