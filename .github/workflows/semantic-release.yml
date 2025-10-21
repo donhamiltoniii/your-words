@@ -3,7 +3,7 @@ name: Semantic Release
 on:
   push:
     branches: [main]
-  workflow_dispatch:   # manual trigger
+  workflow_dispatch: # manual trigger
 
 jobs:
   release:
@@ -12,7 +12,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-      packages: write   # only needed if you publish to npm
+      packages: write # only needed if you publish to npm
     steps:
       # ------------------------------------------------------------
       # 1️⃣ Checkout with full history (required for tag analysis)
@@ -28,8 +28,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'   # adjust if you use a different version
-          cache: 'npm'
+          node-version-file: ".nvmrc" # adjust if you use a different version
+          cache: "npm"
 
       # ------------------------------------------------------------
       # 3️⃣ Install dependencies (including devDeps)
